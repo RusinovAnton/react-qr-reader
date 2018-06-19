@@ -12,7 +12,7 @@ let workerBlob;
 if (typeof Blob === 'function') {
   // eslint-disable-next-line
   workerBlob = new Blob([__inline('../lib/worker.js')], {
-    type: 'application/javascript'
+    type: 'application/javascript',
   });
 }
 
@@ -21,23 +21,23 @@ const propsKeys = ['delay', 'legacyMode', 'facingMode'];
 
 module.exports = class Reader extends Component {
   static propTypes = {
-    onScan: PropTypes.func.isRequired,
-    onError: PropTypes.func.isRequired,
-    onLoad: PropTypes.func,
-    onImageLoad: PropTypes.func,
+    className: PropTypes.string,
     delay: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
     facingMode: PropTypes.oneOf(['user', 'environment']),
     legacyMode: PropTypes.bool,
+    onError: PropTypes.func.isRequired,
+    onImageLoad: PropTypes.func,
+    onLoad: PropTypes.func,
+    onScan: PropTypes.func.isRequired,
     resolution: PropTypes.number,
     showViewFinder: PropTypes.bool,
     style: PropTypes.any,
-    className: PropTypes.string
   };
   static defaultProps = {
     delay: 500,
     resolution: 600,
     facingMode: 'environment',
-    showViewFinder: true
+    showViewFinder: true,
   };
 
   els = {};
@@ -46,7 +46,7 @@ module.exports = class Reader extends Component {
     super(props);
 
     this.state = {
-      mirrorVideo: false
+      mirrorVideo: false,
     };
 
     // Bind function to the class
@@ -217,7 +217,7 @@ module.exports = class Reader extends Component {
     // Get image/video dimensions
     let width = Math.floor(legacyMode ? img.naturalWidth : preview.videoWidth);
     let height = Math.floor(
-      legacyMode ? img.naturalHeight : preview.videoHeight
+      legacyMode ? img.naturalHeight : preview.videoHeight,
     );
 
     // Canvas draw offsets
@@ -261,7 +261,7 @@ module.exports = class Reader extends Component {
         hozOffset,
         vertOffset,
         width,
-        height
+        height,
       );
 
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -323,7 +323,7 @@ module.exports = class Reader extends Component {
       position: 'relative',
       width: '100%',
       paddingTop: '100%',
-      ...style
+      ...style,
     };
     const hiddenStyle = { display: 'none' };
     const previewStyle = {
@@ -333,16 +333,16 @@ module.exports = class Reader extends Component {
       position: 'absolute',
       overflow: 'hidden',
       width: '100%',
-      height: '100%'
+      height: '100%',
     };
     const videoPreviewStyle = {
       ...previewStyle,
       objectFit: 'cover',
-      transform: this.state.mirrorVideo ? 'scaleX(-1)' : undefined
+      transform: this.state.mirrorVideo ? 'scaleX(-1)' : undefined,
     };
     const imgPreviewStyle = {
       ...previewStyle,
-      objectFit: 'scale-down'
+      objectFit: 'scale-down',
     };
 
     const viewFinderStyle = {
@@ -354,7 +354,7 @@ module.exports = class Reader extends Component {
       boxShadow: 'inset 0 0 0 5px rgba(255, 0, 0, 0.5)',
       position: 'absolute',
       width: '100%',
-      height: '100%'
+      height: '100%',
     };
 
     return (
