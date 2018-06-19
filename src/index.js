@@ -26,6 +26,7 @@ module.exports = class Reader extends Component {
       imgPreview: PropTypes.string,
       videoPreview: PropTypes.string,
       viewFinder: PropTypes.string,
+      activeViewFinder: PropTypes.string,
     }),
     delay: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
     facingMode: PropTypes.oneOf(['user', 'environment']),
@@ -52,6 +53,7 @@ module.exports = class Reader extends Component {
     super(props);
 
     this.state = {
+      hasDecoded: false,
       mirrorVideo: false,
     };
 
@@ -282,6 +284,7 @@ module.exports = class Reader extends Component {
     const { onScan, legacyMode, delay } = this.props;
     const decoded = e.data;
     onScan(decoded || null);
+    this.setState({ hasDecoded: !!decoded });
 
     if (!legacyMode && typeof delay == 'number' && this.worker) {
       this.timeout = setTimeout(this.check, delay);
@@ -341,10 +344,13 @@ module.exports = class Reader extends Component {
       width: '100%',
       height: '100%',
     };
+    const videoPreviewFix = {
+      transform: this.state.mirrorVideo ? 'scaleX(-1)' : undefined,
+    };
     const videoPreviewStyle = {
       ...previewStyle,
+      ...videoPreviewFix,
       objectFit: 'cover',
-      transform: this.state.mirrorVideo ? 'scaleX(-1)' : undefined,
     };
     const imgPreviewStyle = {
       ...previewStyle,
@@ -363,9 +369,17 @@ module.exports = class Reader extends Component {
     };
 
     return (
-      <div className={classes.container} style={containerStyle}>
+      <div
+        className={classes.container}
+        style={!classes.container ? containerStyle : undefined}
+      >
         {!legacyMode && showViewFinder ? (
-          <div className={classes.viewFinder} style={viewFinderStyle} />
+          <div
+            className={`${classes.viewFinder}${
+              this.state.hasDecoded ? ` ${classes.activeViewFinder}` : ''
+            }`}
+            style={!classes.viewFinder ? viewFinderStyle : undefined}
+          />
         ) : null}
         {legacyMode ? (
           <input
@@ -379,14 +393,14 @@ module.exports = class Reader extends Component {
         {legacyMode ? (
           <img
             className={classes.imgPreview}
-            style={imgPreviewStyle}
+            style={!classes.imgPreview ? imgPreviewStyle : undefined}
             ref={this.setRefFactory('img')}
             onLoad={onImageLoad}
           />
         ) : (
           <video
             className={classes.videoPreview}
-            style={videoPreviewStyle}
+            style={!classes.videoPreview ? videoPreviewStyle : videoPreviewFix}
             ref={this.setRefFactory('preview')}
           />
         )}
