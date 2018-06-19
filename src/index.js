@@ -317,13 +317,13 @@ module.exports = class Reader extends Component {
       onImageLoad,
       legacyMode,
       showViewFinder,
-      facingMode
     } = this.props;
 
     const containerStyle = {
       position: 'relative',
       width: '100%',
-      paddingTop: '100%'
+      paddingTop: '100%',
+      ...style
     };
     const hiddenStyle = { display: 'none' };
     const previewStyle = {
@@ -358,35 +358,31 @@ module.exports = class Reader extends Component {
     };
 
     return (
-      <section className={className} style={style}>
-        <section style={containerStyle}>
-          {!legacyMode && showViewFinder ? (
-            <div style={viewFinderStyle} />
-          ) : null}
-          {legacyMode ? (
-            <input
-              style={hiddenStyle}
-              type="file"
-              accept="image/*"
-              ref={this.setRefFactory('input')}
-              onChange={this.handleInputChange}
-            />
-          ) : null}
-          {legacyMode ? (
-            <img
-              style={imgPreviewStyle}
-              ref={this.setRefFactory('img')}
-              onLoad={onImageLoad}
-            />
-          ) : (
-            <video
-              style={videoPreviewStyle}
-              ref={this.setRefFactory('preview')}
-            />
-          )}
+      <section className={className} style={containerStyle}>
+        {!legacyMode && showViewFinder ? <div style={viewFinderStyle} /> : null}
+        {legacyMode ? (
+          <input
+            style={hiddenStyle}
+            type="file"
+            accept="image/*"
+            ref={this.setRefFactory('input')}
+            onChange={this.handleInputChange}
+          />
+        ) : null}
+        {legacyMode ? (
+          <img
+            style={imgPreviewStyle}
+            ref={this.setRefFactory('img')}
+            onLoad={onImageLoad}
+          />
+        ) : (
+          <video
+            style={videoPreviewStyle}
+            ref={this.setRefFactory('preview')}
+          />
+        )}
 
-          <canvas style={hiddenStyle} ref={this.setRefFactory('canvas')} />
-        </section>
+        <canvas style={hiddenStyle} ref={this.setRefFactory('canvas')} />
       </section>
     );
   }
