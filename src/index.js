@@ -21,7 +21,12 @@ const propsKeys = ['delay', 'legacyMode', 'facingMode'];
 
 module.exports = class Reader extends Component {
   static propTypes = {
-    className: PropTypes.string,
+    classes: PropTypes.shape({
+      container: PropTypes.string,
+      imgPreview: PropTypes.string,
+      videoPreview: PropTypes.string,
+      viewFinder: PropTypes.string,
+    }),
     delay: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
     facingMode: PropTypes.oneOf(['user', 'environment']),
     legacyMode: PropTypes.bool,
@@ -31,12 +36,13 @@ module.exports = class Reader extends Component {
     onScan: PropTypes.func.isRequired,
     resolution: PropTypes.number,
     showViewFinder: PropTypes.bool,
-    style: PropTypes.any,
+    style: PropTypes.object,
   };
   static defaultProps = {
+    classes: {},
     delay: 500,
-    resolution: 600,
     facingMode: 'environment',
+    resolution: 600,
     showViewFinder: true,
   };
 
@@ -312,11 +318,11 @@ module.exports = class Reader extends Component {
   }
   render() {
     const {
-      style,
-      className,
-      onImageLoad,
+      classes,
       legacyMode,
+      onImageLoad,
       showViewFinder,
+      style,
     } = this.props;
 
     const containerStyle = {
@@ -344,7 +350,6 @@ module.exports = class Reader extends Component {
       ...previewStyle,
       objectFit: 'scale-down',
     };
-
     const viewFinderStyle = {
       top: 0,
       left: 0,
@@ -358,8 +363,10 @@ module.exports = class Reader extends Component {
     };
 
     return (
-      <section className={className} style={containerStyle}>
-        {!legacyMode && showViewFinder ? <div style={viewFinderStyle} /> : null}
+      <div className={classes.container} style={containerStyle}>
+        {!legacyMode && showViewFinder ? (
+          <div className={classes.viewFinder} style={viewFinderStyle} />
+        ) : null}
         {legacyMode ? (
           <input
             style={hiddenStyle}
@@ -371,19 +378,21 @@ module.exports = class Reader extends Component {
         ) : null}
         {legacyMode ? (
           <img
+            className={classes.imgPreview}
             style={imgPreviewStyle}
             ref={this.setRefFactory('img')}
             onLoad={onImageLoad}
           />
         ) : (
           <video
+            className={classes.videoPreview}
             style={videoPreviewStyle}
             ref={this.setRefFactory('preview')}
           />
         )}
 
         <canvas style={hiddenStyle} ref={this.setRefFactory('canvas')} />
-      </section>
+      </div>
     );
   }
 };
